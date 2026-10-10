@@ -1,0 +1,85 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Open Browser",
+      "type": "shell",
+      "command": "Start-Sleep 3; Start-Process 'http://localhost:8000'",
+      "presentation": { "reveal": "never", "panel": "shared" }
+    },
+    {
+      "label": "Start SURAKSHA + Open Browser",
+      "dependsOrder": "parallel",
+      "dependsOn": ["Start SURAKSHA", "Open Browser"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": { "reveal": "always", "panel": "new", "clear": true }
+    },
+    {
+      "label": "Start SURAKSHA",
+      "type": "shell",
+      "command": ".venv\\Scripts\\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+      "options": {
+        "cwd": "${workspaceFolder}\\backend",
+        "env": {
+          "PYTHONPATH": "."
+        }
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Started reloader process",
+          "endsPattern": "Application startup complete"
+        }
+      }
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": ".venv\\Scripts\\pytest.exe -v tests/test_api.py",
+      "options": {
+        "cwd": "${workspaceFolder}\\backend",
+        "env": {
+          "PYTHONPATH": "."
+        }
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "clear": true
+      }
+    },
+    {
+      "label": "Stop & Restart SURAKSHA",
+      "type": "shell",
+      "command": "Get-Process -Name python -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep 1; .venv\\Scripts\\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+      "options": {
+        "cwd": "${workspaceFolder}\\backend",
+        "env": {
+          "PYTHONPATH": "."
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "clear": true
+      }
+    }
+  ]
+}
